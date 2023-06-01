@@ -153,32 +153,6 @@ const parseTimeExpression = (timeExpression: string, min: number, max : number):
     throw new Error(`Invalid expression: ${timeExpression}`);
 };
 
-const existsInArray = (arr: number[], value: number): boolean => {
-    // search for a value in an ascending sorted array
-    if (arr.length < 10) {
-        return arr.includes(value);
-    }
-    if (arr[0] < value || arr[arr.length - 1] > value) {
-        return false;
-    }
-    let minIdx = 0;
-    let maxIdx = arr.length - 1;
-    while (minIdx <= maxIdx) {
-        const midIdx = Math.floor((minIdx + maxIdx) / 2);
-        const testResult = value - arr[midIdx];
-        if (testResult < 0) {
-            maxIdx = midIdx - 1;
-        } else if (testResult > 0) {
-            minIdx = midIdx + 1;
-        } else if (testResult === 0) {
-            return true;
-        } else {
-            break;
-        }
-    }
-    return false;
-};
-
 const tick = () => {
     const d = new Date();
     runner = setTimeout(() => {
@@ -195,9 +169,9 @@ const tick = () => {
     tasks.forEach(task => {
         const runTask = Object.entries(now).every(([key, value]) => {
             if (key === 'year') {
-                return task.year === null || existsInArray(task.year, value);
+                return task.year === null || task.year.includes(value);
             }
-            return existsInArray((task as any)[key], value);
+            return (task as any)[key].includes(value);
         });
         if (runTask) {
             console.info(`myCron: Running task ${task.name}`);
